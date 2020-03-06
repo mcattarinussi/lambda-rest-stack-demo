@@ -1,8 +1,6 @@
-import { APIGatewayEvent } from 'aws-lambda';
-
-export const handler = async (_: APIGatewayEvent): Promise<any> => {
+export const handler = async (): Promise<object> => {
     return {
         statusCode: 200,
-        body: "hey"
-    }
-}
+        body: 'hey',
+    };
+};
