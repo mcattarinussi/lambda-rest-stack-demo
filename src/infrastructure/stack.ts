@@ -1,24 +1,24 @@
-import path from 'path';
 import * as cdk from '@aws-cdk/core';
-import * as lambda from '@aws-cdk/aws-lambda';
-import { LambdaRestApi, LambdaIntegration } from '@aws-cdk/aws-apigateway';
+
+import { createAppAuth } from './appAuth';
+import { createApi } from './api';
 
 export class LambdaRestStackDemoStack extends cdk.Stack {
-    constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
-        super(scope, id, props);
+    constructor(scope: cdk.Construct) {
+        super(scope, 'LambdaRestStackDemoStack');
 
-        const heyLambda = new lambda.Function(this, 'hey', {
-            runtime: lambda.Runtime.NODEJS_12_X,
-            handler: 'index.handler',
-            code: lambda.Code.fromAsset(path.join(__dirname, '../handlers/')),
+        const { userPool, userPoolClient } = createAppAuth(this);
+
+        createApi(this, { userPoolArn: userPool.userPoolArn });
+
+        new cdk.CfnOutput(this, 'userPoolId', {
+            exportName: 'userPoolId',
+            value: userPool.userPoolId,
         });
 
-        const heyRestApi = new LambdaRestApi(this, 'heyLambdaRestApi', {
-            restApiName: 'Hey API',
-            handler: heyLambda,
-            proxy: false,
+        new cdk.CfnOutput(this, 'userPoolClientId', {
+            exportName: 'userPoolClientId',
+            value: userPoolClient.userPoolClientId,
         });
-
-        heyRestApi.root.addResource('hey').addMethod('GET', new LambdaIntegration(heyLambda));
     }
 }

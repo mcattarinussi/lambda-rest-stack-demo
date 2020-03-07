@@ -18,6 +18,7 @@
   "devDependencies": {
     "@aws-cdk/assert": "1.27.0",
     "@aws-cdk/aws-apigateway": "^1.27.0",
+    "@aws-cdk/aws-cognito": "^1.27.0",
     "@aws-cdk/aws-lambda": "^1.27.0",
     "@aws-cdk/core": "1.27.0",
     "@types/aws-lambda": "^8.10.46",
