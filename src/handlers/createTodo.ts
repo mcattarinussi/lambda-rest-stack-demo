@@ -1,9 +1,10 @@
-import { APIGatewayEvent } from 'aws-lambda';
+import { applyMiddleware } from './middleware';
 
-export const handler = async ({ body }: APIGatewayEvent): Promise<object> => ({
-    statusCode: 201,
-    body: JSON.stringify({
+export const handler = applyMiddleware(async ({ data, userId }) => ({
+    data: {
         id: '1',
-        ...JSON.parse(body || '{}'),
-    }),
-});
+        userId,
+        ...data,
+    },
+    statusCode: 200,
+}));

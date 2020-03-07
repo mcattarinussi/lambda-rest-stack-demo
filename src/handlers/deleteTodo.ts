@@ -1,1 +1,3 @@
-export const handler = async (): Promise<object> => ({ statusCode: 204 });
+import { applyMiddleware } from './middleware';
+
+export const handler = applyMiddleware(async () => ({ statusCode: 204 }));

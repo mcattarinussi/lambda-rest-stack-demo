@@ -1,6 +1,8 @@
-export const handler = async (): Promise<object> => ({
+import { applyMiddleware } from './middleware';
+
+export const handler = applyMiddleware(async () => ({
     statusCode: 200,
-    body: JSON.stringify([
+    data: [
         {
             id: '1',
             title: 'My first TODO',
@@ -11,5 +13,5 @@ export const handler = async (): Promise<object> => ({
             title: 'Second TODO',
             details: 'Another important thing to do.',
         },
-    ]),
-});
+    ],
+}));
