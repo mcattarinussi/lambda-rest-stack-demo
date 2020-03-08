@@ -6,14 +6,15 @@
     "npm": ">=6.12"
   },
   "scripts": {
-    "build": "tsc",
-    "build:watch": "tsc -w",
+    "build:dev": "webpack --mode development",
+    "build:prod": "webpack --mode production",
+    "build:watch": "webpack --mode development",
     "lint": "tsc --noEmit && eslint --max-warnings 0 --ext ts src/**",
     "lint:fix": "eslint --fix --ext ts src/**",
     "test": "jest",
-    "cdk:synth": "npm run build && cdk synth",
-    "cdk:deploy": "npm run build && cdk deploy",
-    "cdk:diff": "npm run build && cdk diff"
+    "cdk:synth": "npm run build:prod && cdk synth",
+    "cdk:deploy": "npm run build:prod && cdk deploy",
+    "cdk:diff": "npm run build:prod && cdk diff"
   },
   "devDependencies": {
     "@aws-cdk/assert": "1.27.0",
@@ -35,6 +36,11 @@
     "prettier": "^1.19.1",
     "source-map-support": "^0.5.16",
     "ts-jest": "^24.1.0",
-    "typescript": "~3.7.2"
-  }
+    "ts-loader": "^6.2.1",
+    "typescript": "~3.7.2",
+    "webpack": "^4.42.0",
+    "webpack-cli": "^3.3.11",
+    "webpack-node-externals": "^1.7.2"
+  },
+  "dependencies": {}
 }

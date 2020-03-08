@@ -8,8 +8,8 @@ const createMethods = (scope: Construct, resource: IResource, methods: { method:
     methods.forEach(m => {
         const lambdaHandler = new lambda.Function(scope, `${m.name}Lambda`, {
             runtime: lambda.Runtime.NODEJS_12_X,
-            handler: `${m.name}.handler`,
-            code: lambda.Code.fromAsset(path.join(__dirname, '../handlers/')),
+            handler: 'index.handler',
+            code: lambda.Code.fromAsset(path.join(__dirname, '../app/handlers', m.name)),
         });
 
         resource.addMethod(m.method, new LambdaIntegration(lambdaHandler));
