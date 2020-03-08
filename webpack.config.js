@@ -11,12 +11,13 @@ const lambdaEntryMap = fs
     .reduce(
         (acc, name) => ({
             ...acc,
-            [name]: path.join(LAMBDA_HANDLERS_FOLDER, name, 'index.ts'),
+            [name]: ['source-map-support/register', path.join(LAMBDA_HANDLERS_FOLDER, name, 'index.ts')],
         }),
         {}
     );
 
 const commonConfig = {
+    devtool: 'source-map',
     target: 'node',
     module: {
         rules: [
