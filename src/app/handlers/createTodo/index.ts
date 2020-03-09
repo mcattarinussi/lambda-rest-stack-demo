@@ -1,10 +1,14 @@
-import { applyMiddleware } from '../../middleware';
+import { v4 as uuidv4 } from 'uuid';
 
-export const handler = applyMiddleware(async ({ data, userId }) => ({
-    data: {
-        id: '1',
+import { applyMiddleware } from '../../middleware';
+import { createTodo } from '../../db';
+
+export const handler = applyMiddleware(async ({ data, userId }) => {
+    const item = await createTodo({
+        ...(data as { title: string; description?: string }),
+        id: uuidv4(),
         userId,
-        ...data,
-    },
-    statusCode: 200,
-}));
+    });
+
+    return { data: item, statusCode: 201 };
+});

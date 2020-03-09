@@ -43,6 +43,7 @@ const appConfig = {
         libraryTarget: 'commonjs2',
         filename: '[name]/index.js',
     },
+    externals: ['aws-sdk'],
 };
 
 const infrastructureConfig = {
