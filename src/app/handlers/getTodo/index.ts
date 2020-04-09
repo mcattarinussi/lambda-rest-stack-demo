@@ -1,7 +1,7 @@
-import { applyMiddleware } from '../../middleware';
+import { applyDefaultMiddleware } from '../../middlewares';
 import { getTodo } from '../../db';
 
-export const handler = applyMiddleware(async ({ id, userId }) => {
+export const handler = applyDefaultMiddleware(async ({ id, userId }) => {
     const item = await getTodo(id as string, userId);
 
     if (!item) {

@@ -18,7 +18,7 @@ jobs:
       - name: Lint
         run: npm run lint
       - name: Build artifact
-        run: npm run cdk:synth
+        run: npm run build:artifact
       - name: Upload artifact
         uses: actions/upload-artifact@v1
         with:

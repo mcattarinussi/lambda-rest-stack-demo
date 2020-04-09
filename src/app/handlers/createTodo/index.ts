@@ -1,9 +1,9 @@
 import { v4 as uuidv4 } from 'uuid';
 
-import { applyMiddleware } from '../../middleware';
+import { applyDefaultMiddleware } from '../../middlewares/';
 import { createTodo } from '../../db';
 
-export const handler = applyMiddleware(async ({ data, userId }) => {
+export const handler = applyDefaultMiddleware(async ({ data, userId }) => {
     const item = await createTodo({
         ...(data as { title: string; description?: string }),
         id: uuidv4(),

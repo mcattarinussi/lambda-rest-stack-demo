@@ -5,16 +5,17 @@ const nodeExternals = require('webpack-node-externals');
 const LAMBDA_HANDLERS_FOLDER = path.join(__dirname, 'src/app/handlers');
 const OUTPUT_FOLDER = path.join(__dirname, 'dist');
 
-const lambdaEntryMap = fs
-    .readdirSync(LAMBDA_HANDLERS_FOLDER)
-    .filter(path => !path.endsWith('.ts'))
-    .reduce(
-        (acc, name) => ({
-            ...acc,
-            [name]: ['source-map-support/register', path.join(LAMBDA_HANDLERS_FOLDER, name, 'index.ts')],
-        }),
-        {}
-    );
+const createLambdaEntryMap = indexName =>
+    fs
+        .readdirSync(LAMBDA_HANDLERS_FOLDER)
+        .filter(path => !path.endsWith('.ts'))
+        .reduce(
+            (acc, name) => ({
+                ...acc,
+                [name]: ['source-map-support/register', path.join(LAMBDA_HANDLERS_FOLDER, name, indexName)],
+            }),
+            {}
+        );
 
 const commonConfig = {
     devtool: 'source-map',
@@ -35,16 +36,16 @@ const commonConfig = {
     },
 };
 
-const appConfig = {
+const createAppConfig = mode => ({
     ...commonConfig,
-    entry: lambdaEntryMap,
+    entry: createLambdaEntryMap(mode === 'development' ? 'index.local.ts' : 'index.ts'),
     output: {
         path: path.join(OUTPUT_FOLDER, 'app/handlers'),
         libraryTarget: 'commonjs2',
         filename: '[name]/index.js',
     },
-    externals: ['aws-sdk'],
-};
+    externals: mode === 'development' ? [] : ['aws-sdk'],
+});
 
 const infrastructureConfig = {
     ...commonConfig,
@@ -63,10 +64,4 @@ const infrastructureConfig = {
     externals: [nodeExternals()],
 };
 
-module.exports = (_, argv) => {
-    if (argv.mode === 'development') {
-        appConfig.externals = [nodeExternals()];
-    }
-
-    return [appConfig, infrastructureConfig];
-};
+module.exports = (_, argv) => [createAppConfig(argv.mode), infrastructureConfig];

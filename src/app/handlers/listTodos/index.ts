@@ -1,7 +1,7 @@
-import { applyMiddleware } from '../../middleware';
+import { applyDefaultMiddleware } from '../../middlewares';
 import { listTodos } from '../../db';
 
-export const handler = applyMiddleware(async ({ userId }) => {
+export const handler = applyDefaultMiddleware(async ({ userId }) => {
     const todos = await listTodos(userId);
 
     return {

@@ -32,18 +32,7 @@ export COGNITO_CHALLENGE_SESSION=`aws cognito-idp initiate-auth --auth-flow USER
 
 Respond to challenge and get token
 
-aws cognito-idp admin-respond-to-auth-challenge --user-pool-id eu-west-1_pAWG85eN0 --client-id $USERPOOL_CLIENT_ID --challenge-responses "NEW_PASSWORD=$NEW_PASSWORD,USERNAME=$USER_EMAIL" --challenge-name NEW_PASSWORD_REQUIRED --session $COGNITO_CHALLENGE_SESSION
-
-{
-    "ChallengeParameters": {},
-    "AuthenticationResult": {
-        "AccessToken": "eyJraWQiOiJzcitDdGpFQlJcLzQwM...",
-        "ExpiresIn": 3600,
-        "TokenType": "Bearer",
-        "RefreshToken": "eyJjdHkiOiJKV1QiLCJlbmMiOiJBM...",
-        "IdToken": "eyJraWQiOiJtZExkVDV0dTFoNWVmTUZuWG..."
-    }
-}
+export ID_TOKEN=`aws cognito-idp admin-respond-to-auth-challenge --user-pool-id $USERPOOL_ID --client-id $USERPOOL_CLIENT_ID --challenge-responses "NEW_PASSWORD=$NEW_PASSWORD,USERNAME=$USER_EMAIL" --challenge-name NEW_PASSWORD_REQUIRED --session $COGNITO_CHALLENGE_SESSION | jq -r .AuthenticationResult.IdToken`
 
 ### Login
 

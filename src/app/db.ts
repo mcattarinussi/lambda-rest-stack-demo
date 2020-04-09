@@ -1,6 +1,6 @@
 import { AWSError, DynamoDB } from 'aws-sdk';
 
-const { DYNAMO_TABLE: TableName = 'todos' } = process.env;
+const { AWS_ENDPOINT, DYNAMO_TABLE: TableName = 'todos' } = process.env;
 
 interface Todo {
     id: string;
@@ -9,7 +9,7 @@ interface Todo {
     description?: string;
 }
 
-const client = new DynamoDB.DocumentClient();
+const client = new DynamoDB.DocumentClient({ endpoint: AWS_ENDPOINT });
 
 export const getTodo = async (id: string, userId: string): Promise<Todo | null> =>
     client

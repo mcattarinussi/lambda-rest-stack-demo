@@ -1,0 +1,45 @@
+version: "3"
+
+services:
+  aws-sam-local:
+    build:
+      context: .
+      dockerfile: aws-sam-cli.dockerfile
+    image: aws-sam-cli
+    command: |
+      local start-api
+        --docker-volume-basedir $PWD/cdk.out
+        --host 0.0.0.0
+        --template /var/opt/lambda-rest-stack-demo/LambdaRestStackDemoStack.template.json
+    ports:
+      - "3000:3000"
+    user: root
+    working_dir: /var/opt/lambda-rest-stack-demo
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ../cdk.out:/var/opt/lambda-rest-stack-demo
+  dynamodb:
+    image: amazon/dynamodb-local
+    command: -jar DynamoDBLocal.jar -sharedDb
+    ports:
+      - "8000:8000"
+  setup-dynamo:
+    image: mesosphere/aws-cli
+    entrypoint: /bin/sh
+    command: |
+      -c "\
+        aws dynamodb describe-table --table-name $$TABLE_NAME --endpoint-url $$DYNAMO_ENDPOINT_URL || \
+        aws dynamodb create-table \
+          --table-name $$TABLE_NAME \
+          --attribute-definitions AttributeName=userId,AttributeType=S AttributeName=id,AttributeType=S \
+          --key-schema AttributeName=userId,KeyType=HASH AttributeName=id,KeyType=RANGE \
+          --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 \
+          --endpoint-url $$DYNAMO_ENDPOINT_URL"
+    depends_on:
+      - dynamodb
+    environment:
+      - AWS_DEFAULT_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=fake-access-key-id
+      - AWS_SECRET_ACCESS_KEY=fake-secret-access-key
+      - DYNAMO_ENDPOINT_URL=http://host.docker.internal:8000
+      - TABLE_NAME=todos-local

@@ -1,7 +1,6 @@
 import path from 'path';
 
 import * as lambda from '@aws-cdk/aws-lambda';
-import * as dynamodb from '@aws-cdk/aws-dynamodb';
 import { Construct } from '@aws-cdk/core';
 import { PolicyStatement } from '@aws-cdk/aws-iam';
 import { RestApi, LambdaIntegration, CfnAuthorizer, AuthorizationType, IResource } from '@aws-cdk/aws-apigateway';
@@ -43,7 +42,11 @@ const createLambdaPolicies = (todosDynamoTableArn: string): PolicyStatement[] =>
 
 export const createApi = (
     scope: Construct,
-    { userPoolArn, todosDynamoTable }: { userPoolArn: string; todosDynamoTable: dynamodb.Table }
+    {
+        dynamoTableArn,
+        dynamoTableName,
+        userPoolArn,
+    }: { dynamoTableArn: string; dynamoTableName: string; userPoolArn: string }
 ): void => {
     const restapi = new RestApi(scope, 'restApi', { restApiName: 'TODO Rest API' });
 
@@ -62,8 +65,10 @@ export const createApi = (
         },
     };
 
-    const environment = { DYNAMO_TABLE: todosDynamoTable.tableName };
-    const policies = createLambdaPolicies(todosDynamoTable.tableArn);
+    const AWS_ENDPOINT = scope.node.tryGetContext('awsEndpoint') || undefined;
+
+    const environment = { AWS_ENDPOINT, DYNAMO_TABLE: dynamoTableName };
+    const policies = createLambdaPolicies(dynamoTableArn);
 
     const todosResource = restapi.root.addResource('todos', { defaultMethodOptions });
     const todoResource = todosResource.addResource('{id}', { defaultMethodOptions });

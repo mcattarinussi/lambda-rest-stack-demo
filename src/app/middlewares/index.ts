@@ -1,4 +1,6 @@
-import { APIGatewayProxyEvent, Context, APIGatewayProxyResult } from 'aws-lambda';
+import { APIGatewayProxyWithCognitoAuthorizerEvent, Context, APIGatewayProxyResult } from 'aws-lambda';
+
+export * from './mock-authorizer';
 
 export type WrappedHandler = (
     parsed: {
@@ -6,20 +8,19 @@ export type WrappedHandler = (
         data: object | null;
         userId: string;
     },
-    event: APIGatewayProxyEvent,
+    event: APIGatewayProxyWithCognitoAuthorizerEvent,
     context: Context
 ) => Promise<{ data?: object; statusCode: number }>;
 
-export const applyMiddleware = (handler: WrappedHandler) => async (
-    event: APIGatewayProxyEvent,
+export const applyDefaultMiddleware = (handler: WrappedHandler) => async (
+    event: APIGatewayProxyWithCognitoAuthorizerEvent,
     context: Context
 ): Promise<APIGatewayProxyResult> => {
     const { body, requestContext, pathParameters } = event;
 
     const { id = null } = pathParameters || {};
     const requestData = body && JSON.parse(body);
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const userId = requestContext!.authorizer!.claims!['cognito:username'];
+    const userId = requestContext.authorizer.claims['cognito:username'];
 
     let data, statusCode;
     try {

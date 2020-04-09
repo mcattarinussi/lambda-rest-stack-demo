@@ -8,19 +8,29 @@ export class LambdaRestStackDemoStack extends cdk.Stack {
     constructor(scope: cdk.Construct) {
         super(scope, 'LambdaRestStackDemoStack');
 
-        const { userPool, userPoolClient } = createAppAuth(this);
-        const todosDynamoTable = createDynamoTable(this);
+        const {
+            userPool: { userPoolArn, userPoolId },
+            userPoolClient: { userPoolClientId },
+        } = createAppAuth(this);
 
-        createApi(this, { userPoolArn: userPool.userPoolArn, todosDynamoTable });
+        const dynamoTableName = this.node.tryGetContext('dynamoTableName');
+
+        if (dynamoTableName) {
+            const dynamoTableArn = this.node.tryGetContext('dynamoTableArn');
+            createApi(this, { userPoolArn, dynamoTableArn, dynamoTableName });
+        } else {
+            const { tableArn: dynamoTableArn, tableName: dynamoTableName } = createDynamoTable(this);
+            createApi(this, { userPoolArn, dynamoTableName, dynamoTableArn });
+        }
 
         new cdk.CfnOutput(this, 'userPoolId', {
             exportName: 'userPoolId',
-            value: userPool.userPoolId,
+            value: userPoolId,
         });
 
         new cdk.CfnOutput(this, 'userPoolClientId', {
             exportName: 'userPoolClientId',
-            value: userPoolClient.userPoolClientId,
+            value: userPoolClientId,
         });
     }
 }

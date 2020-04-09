@@ -6,15 +6,18 @@
     "npm": ">=6.12"
   },
   "scripts": {
-    "build:dev": "webpack --mode development",
+    "build:dev": "webpack --mode development --progress --colors",
+    "build:dev:watch": "npm run build:dev -- --watch",
     "build:prod": "webpack --mode production",
-    "build:watch": "webpack --mode development",
+    "build:artifact": "npm run build:prod && cdk synth",
+    "cdk:diff": "cdk diff",
+    "cdk:deploy": "cdk deploy",
+    "cdk:synth": "cdk synth",
+    "deploy:dev": "npm run build:prod && cdk deploy",
+    "dev": "./local/run.sh",
     "lint": "tsc --noEmit && eslint --max-warnings 0 --ext ts src/**",
     "lint:fix": "eslint --fix --ext ts src/**",
-    "test": "jest",
-    "cdk:synth": "npm run build:prod && cdk synth",
-    "cdk:deploy": "npm run build:prod && cdk deploy",
-    "cdk:diff": "npm run build:prod && cdk diff"
+    "test": "jest"
   },
   "devDependencies": {
     "@aws-cdk/assert": "1.27.0",
@@ -24,7 +27,7 @@
     "@aws-cdk/aws-iam": "^1.27.0",
     "@aws-cdk/aws-lambda": "^1.27.0",
     "@aws-cdk/core": "1.27.0",
-    "@types/aws-lambda": "^8.10.46",
+    "@types/aws-lambda": "^8.10.48",
     "@types/jest": "^24.0.22",
     "@types/node": "10.17.5",
     "@typescript-eslint/eslint-plugin": "^2.22.0",
