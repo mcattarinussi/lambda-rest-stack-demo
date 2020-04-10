@@ -44,6 +44,8 @@ const createAppConfig = mode => ({
         libraryTarget: 'commonjs2',
         filename: '[name]/index.js',
     },
+    // unfortunately we can not use nodeExternals in dev mode since sam local start-api will run
+    // the handler in a container that does not have access to the node_modules on the host
     externals: mode === 'development' ? [] : ['aws-sdk'],
 });
 
