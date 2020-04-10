@@ -2,7 +2,7 @@ import { AWSError, DynamoDB } from 'aws-sdk';
 
 const { AWS_ENDPOINT, DYNAMO_TABLE: TableName = 'todos' } = process.env;
 
-interface Todo {
+export interface Todo {
     id: string;
     userId: string;
     title: string;
